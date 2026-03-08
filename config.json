@@ -1,0 +1,33 @@
+{
+  "telegram_bot_token": "",
+  "telegram_chat_id": "",
+  "exchange": "okx",
+  "trade_mode": "PAPER",
+  "port": 8094,
+  "debug": false,
+  "version": "v2-auto",
+
+  "strategy": {
+    "ema_period": 30,
+    "rsi_period": 14,
+    "rsi_lo": 40,
+    "rsi_hi": 60,
+    "sl_bars": 5,
+    "rr": 2.5,
+    "max_hold_hours": 48,
+    "scan_interval_min": 5
+  },
+
+  "trading": {
+    "position_size": 100,
+    "leverage": 1,
+    "max_positions": 10
+  },
+
+  "auto_symbols": {
+    "enabled": true,
+    "top_n": 50,
+    "min_volume_usdt": 5000000,
+    "exclude": ["BTC/USDT:USDT", "ETH/USDT:USDT", "USDC/USDT:USDT"]
+  }
+}
