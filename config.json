@@ -28,6 +28,11 @@
     "enabled": true,
     "top_n": 50,
     "min_volume_usdt": 5000000,
-    "exclude": ["BTC/USDT:USDT", "ETH/USDT:USDT", "USDC/USDT:USDT"]
+    "exclude_bases": [
+      "BTC", "ETH",
+      "USDC", "USDT", "BUSD", "DAI", "TUSD", "FDUSD", "USDE", "PYUSD",
+      "XAUT", "PAXG", "XAU", "XAG", "XPT", "XPD",
+      "LTC", "BNB", "FIL", "SOL", "AR", "COMP", "APT", "TRUMP"
+    ]
   }
 }

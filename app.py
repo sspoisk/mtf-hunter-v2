@@ -120,9 +120,9 @@ def get_symbols(cfg: dict) -> list:
     if not auto_cfg.get('enabled'):
         return cfg.get('symbols', [])
 
-    top_n      = auto_cfg.get('top_n', 50)
-    min_vol    = auto_cfg.get('min_volume_usdt', 5_000_000)
-    exclude    = set(auto_cfg.get('exclude', []))
+    top_n         = auto_cfg.get('top_n', 50)
+    min_vol       = auto_cfg.get('min_volume_usdt', 5_000_000)
+    exclude_bases = set(auto_cfg.get('exclude_bases', []))
 
     try:
         tickers = exchange.fetch_tickers()
@@ -130,11 +130,8 @@ def get_symbols(cfg: dict) -> list:
         for sym, t in tickers.items():
             if not sym.endswith('/USDT:USDT'):
                 continue
-            if sym in exclude:
-                continue
-            # Фильтруем стейблы и wrapped токены
             base = sym.split('/')[0]
-            if base in ('USDC', 'USDT', 'BUSD', 'DAI', 'TUSD', 'FDUSD'):
+            if base in exclude_bases:
                 continue
             vol = (t.get('quoteVolume') or 0)
             if vol == 0:
