@@ -112,10 +112,6 @@ def push_event(data: dict):
 
 # ── Auto symbol discovery ─────────────────────────────────────────────────────
 def get_symbols(cfg: dict) -> list:
-    """
-    V2: автоматически берём топ-N пар по объёму с OKX.
-    Фильтруем по min_volume_usdt, исключаем BTC/ETH и стейблы.
-    """
     auto_cfg = cfg.get('auto_symbols', {})
     if not auto_cfg.get('enabled'):
         return cfg.get('symbols', [])
@@ -144,7 +140,6 @@ def get_symbols(cfg: dict) -> list:
         result = [p[0] for p in pairs[:top_n]]
         logger.info(f"[AUTO] Выбрано {len(result)} пар (топ по объёму, min_vol={min_vol/1e6:.0f}M)")
         return result
-
     except Exception as e:
         logger.error(f"[AUTO] Ошибка выбора пар: {e}")
         return cfg.get('symbols', [])
@@ -169,7 +164,7 @@ def _do_scan():
     global signals, watchlist, last_scan_at, cfg
     cfg = load_config()
     strategy_cfg = cfg.get('strategy', {})
-    symbols = get_symbols(cfg)   # V2: авто или фиксированный список
+    symbols = get_symbols(cfg)
     rsi_lo = strategy_cfg.get('rsi_lo', 40)
     rsi_hi = strategy_cfg.get('rsi_hi', 60)
 
@@ -233,7 +228,7 @@ def _do_scan():
         })
 
         if sig:
-            found.append({
+            sig_data = {
                 'symbol':    sym,
                 'name':      sym.split('/')[0],
                 'direction': sig['direction'],
@@ -246,9 +241,16 @@ def _do_scan():
                 'trend':     sig['trend'],
                 'rr':        sig['rr'],
                 'found_at':  now_str(),
-            })
+            }
+            found.append(sig_data)
             logger.info(f"  SIGNAL: {sym} {sig['direction']} RSI={sig['rsi']:.1f} "
                         f"trend={sig['trend']}")
+            # Автооткрытие позиции
+            if cfg.get('auto_trade', True):
+                pos = trader.open_position(sym, sig)
+                if pos:
+                    logger.info(f"  AUTO-OPEN: {sym} {sig['direction']} id={pos.id}")
+                    push_event({'type': 'position_opened', 'symbol': sym})
         time.sleep(0.15)
 
     with scan_lock:

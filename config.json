@@ -3,6 +3,7 @@
   "telegram_chat_id": "",
   "exchange": "okx",
   "trade_mode": "PAPER",
+  "auto_trade": true,
   "port": 8094,
   "debug": false,
   "version": "v2-auto",
